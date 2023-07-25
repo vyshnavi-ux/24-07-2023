@@ -51,20 +51,30 @@ function handleScroll() {
   let quoteImage;
   let pathImage;
   let clientImage;
-  containers.forEach((element) => {
+  let commentedBy;
+  let partnerIcons;
+  let lineArrow;
+  let insightImages;
+  let trekImage;
+  let totalContainers = containers.length;
+  containers.forEach((element,i) => {
     if (element.children.length) {
       imageArea = element.querySelector(".imageArea");
       if (imageArea.children.length) {
         quoteImage = imageArea?.querySelector(".quote");
         pathImage = imageArea?.querySelector(".path");
-        clientImage = imageArea?.querySelector(".img");
+        clientImage = imageArea?.querySelector(".img-client");
+        partnerIcons = imageArea?.querySelectorAll(".partner-icon");
+        insightImages = imageArea?.querySelectorAll(".insight-image");
+        trekImage = imageArea?.querySelector(".trek");
       }
-
       textArea = element.querySelector(".textArea");
       commonHeading = textArea?.querySelector(".common-heading");
       commonOutlineText = textArea?.querySelector(".common-outline-text");
       commonParagraphText = textArea?.querySelector(".common-paragraph-text");
       commonButton = textArea?.querySelector(".common-outline-button ");
+      commentedBy = textArea?.querySelector(".commented-by");
+      lineArrow = textArea.querySelector(".line-arrow");
 
       let elementY = Math.round(element.getBoundingClientRect().y);
 
@@ -72,6 +82,7 @@ function handleScroll() {
         if (element.classList.contains("slider-container")) {
           imageArea.style.opacity = 1;
           imageArea.classList.add("animate-active-left");
+
           quoteImage?.classList.add("add-opacity");
           setTimeout(() => {
             pathImage?.classList.add("add-opacity");
@@ -79,20 +90,76 @@ function handleScroll() {
           setTimeout(() => {
             clientImage?.classList.add("add-opacity");
           }, 700);
-
-          //   setTimeout(() => {
-          //     pathImage?.style.opacity=1;
-          //   }, 500);
-          //   setTimeout(() => {
-          //     clientImage?.style.opacity=1;
-          //   }, 1000);
         } else {
           imageArea.style.opacity = 1;
           imageArea.classList.add("animate-active");
+
+          partnerIcons.forEach((partner, index) => {
+            setTimeout(() => {
+              partner.style.opacity = 1;
+              partner.classList.add("animate-active-opacity");
+            }, 200 * index);
+          });
+          if (insightImages.length) {
+            insightImages.forEach((insightImage, index) => {
+              insightImage.addEventListener("mouseleave", () => {
+                const originalColor = "transparent";
+                const blinkColor = "pink";
+
+                insightImage.style.backgroundColor = blinkColor;
+
+                setTimeout(() => {
+                  insightImage.style.backgroundColor = originalColor;
+                }, 500);
+              });
+
+              if (index == 0 || index == 2) {
+                setTimeout(() => {
+                  insightImage.classList.add("animate-active-top");
+                }, 250);
+              } else {
+                setTimeout(() => {
+                  insightImage.classList.add("animate-active-bottom");
+                }, 500);
+              }
+            });
+          }
+          if (!trekImage) {
+            setTimeout(() => {
+              trekImage?.classList.add("animate-active-top-image");
+            }, 500);
+          }
         }
       } else {
         imageArea.style.opacity = 0;
         quoteImage?.classList.remove("add-opacity");
+        partnerIcons.forEach((partner, index) => {
+          setTimeout(() => {
+            partner.style.opacity = 0;
+            partner.classList.remove("animate-active-opacity");
+          }, 200 * index);
+        });
+
+        if (insightImages.length) {
+          insightImages.forEach((insightImage, index) => {
+            if (index == 0 || index == 2) {
+              setTimeout(() => {
+                insightImage.classList.remove("animate-active-top");
+              }, 250);
+            } else {
+              setTimeout(() => {
+                insightImage.classList.remove("animate-active-bottom");
+              }, 500);
+            }
+          });
+        }
+
+        if (trekImage) {
+          setTimeout(() => {
+            trekImage?.classList.remove("animate-active-top-image");
+          }, 500);
+        }
+
         setTimeout(() => {
           pathImage?.classList.remove("add-opacity");
         }, 500);
@@ -105,12 +172,35 @@ function handleScroll() {
         }
       }
 
+      if (elementY < 400) {
+        if (element.classList.contains("culture-area")) {
+          textArea.style.opacity = 1;
+          textArea.classList.add("our-culture-bottom-top");
+        } else {
+          textArea.classList.remove("our-culture-bottom-top");
+        }
+      } else {
+        textArea.classList.remove("our-culture-bottom-top");
+      }
+
       if (elementY < 300) {
         commonOutlineText.style.opacity = 1;
         commonOutlineText.classList.add("animate-active");
       } else {
         commonOutlineText.style.opacity = 0;
         commonOutlineText.classList.remove("animate-active");
+      }
+
+      if (elementY < 200) {
+        if (lineArrow) {
+          lineArrow.style.opacity = 1;
+          lineArrow.classList.add("animate-active");
+        }
+      } else {
+        if (lineArrow) {
+          lineArrow.style.opacity = 0;
+          lineArrow.classList.remove("animate-active");
+        }
       }
 
       if (elementY < 150) {
@@ -121,15 +211,53 @@ function handleScroll() {
         commonHeading.classList.remove("animate-active");
       }
 
-      if (elementY < 70) {
+      if (elementY < 120) {
         commonParagraphText.style.opacity = 1;
         commonParagraphText.classList.add("animate-active");
+        if (element.classList.contains("ourpeople-area")) {
+          if (imageArea.children.length) {
+            let imgItems = imageArea.querySelectorAll(".img-icon");
+            imgItems.forEach((item, index) => {
+              let totalCount = imgItems.length - 1;
+              if (index < totalCount) {
+                setTimeout(() => {
+                  item?.classList.add("animate-our-people");
+                }, 1250 * index);
+              }
+              if (index === totalCount) {
+                setTimeout(() => {
+                  item.style.opacity = 1;
+                  item?.classList.add("animate-our-people-complete");
+                }, 1250 * index);
+              }
+            });
+          }
+        }
       } else {
         commonParagraphText.style.opacity = 0;
         commonParagraphText.classList.remove("animate-active");
+        if (element.classList.contains("ourpeople-area")) {
+          if (imageArea.children.length) {
+            let imgItems = imageArea.querySelectorAll(".img-icon");
+            imgItems.forEach((item, index) => {
+              let totalCount = imgItems.length - 1;
+              if (index < totalCount) {
+                setTimeout(() => {
+                  item?.classList.remove("animate-our-people");
+                }, 1250 * index);
+              }
+              if (index === totalCount) {
+                setTimeout(() => {
+                  item.style.opacity = 0;
+                  item?.classList.remove("animate-our-people-complete");
+                }, 1250 * index);
+              }
+            });
+          }
+        }
       }
 
-      if (elementY < 60) {
+      if (elementY < 70) {
         if (commonButton) {
           commonButton.style.opacity = 1;
           commonButton.classList.add("animate-active");
@@ -140,6 +268,19 @@ function handleScroll() {
           commonButton.classList.remove("animate-active");
         }
       }
+
+      if (elementY < 55) {
+        if (commentedBy) {
+          commentedBy.style.opacity = 1;
+          commentedBy.classList.add("animate-active");
+        }
+      } else {
+        if (commentedBy) {
+          commentedBy.style.opacity = 0;
+          commentedBy.classList.remove("animate-active");
+        }
+      }
+
 
       //   imageArea = element.querySelector(".imageArea");
       //   textArea = element.querySelector(".textArea");
@@ -154,6 +295,45 @@ function handleScroll() {
       //   commonHeading.classList.remove("animate-active");
       //   commonParagraphText.style.opacity = 0;
       //   commonParagraphText.classList.remove("animate-active");
+
+      if(i===totalContainers-1){
+        
+        if (elementY < 500) {
+          commonHeading.style.opacity = 1;
+          commonHeading.classList.add("animate-active");
+        } else {
+          commonHeading.style.opacity = 0;
+          commonHeading.classList.remove("animate-active");
+        }
+
+        if(elementY < 450){
+          commonParagraphText.style.opacity = 1;
+          commonParagraphText.classList.add("animate-active");
+        }else{
+          commonParagraphText.style.opacity = 0;
+          commonParagraphText.classList.remove("animate-active");
+        }
+
+        if(elementY < 400){
+          if (commonButton) {
+            commonButton.style.opacity = 1;
+            commonButton.classList.add("animate-active");
+          }
+        }
+        else{
+          if (commonButton) {
+            commonButton.style.opacity = 0;
+            commonButton.classList.remove("animate-active");
+          }
+        }
+
+      }
+
+
+
+
+
+
     }
   });
 }
